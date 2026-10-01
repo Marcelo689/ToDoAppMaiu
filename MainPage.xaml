@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:ToDoApp.Models"
+             xmlns:viewModel="clr-namespace:ToDoApp.ViewModel"
+             x:Class="ToDoApp.MainPage"
+             Title="Minhas Tarefas"
+             BackgroundColor="#F4F5F7">
+
+    <Grid RowDefinitions="Auto, Auto, *" Padding="20" RowSpacing="12">
+
+        <!-- Área de Entrada de Dados -->
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" ColumnSpacing="10">
+            <Entry Grid.Column="0"
+                   Placeholder="Digite uma nova tarefa..."
+                   Text="{Binding Titulo}" />
+
+            <Button Grid.Column="1"
+                    Text="Adicionar"
+                    Command="{Binding AdicionarTarefaCommand}"
+                    BackgroundColor="#512BD4"
+                    TextColor="White" />
+        </Grid>
+
+        <!-- Instruções de Drag & Drop -->
+         <Label Grid.Row="1"
+               Text="Arraste e solte os itens para reordená-los"
+               FontSize="12"
+               TextColor="#888888"
+             Margin="0,0,0,4" />
+
+        <!-- Lista com Drag & Drop -->
+        <CollectionView Grid.Row="2"
+                       ItemsSource="{Binding ListaTarefas}"
+                   HorizontalOptions="Fill"
+                   VerticalOptions="Fill"
+                       x:Name="TarefasCollectionView">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Tarefa">
+                    <Border Margin="0,5" Padding="15,10" Background="#FFFFFF" Stroke="#E0E0E0" StrokeThickness="1">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <DragGestureRecognizer CanDrag="True"
+                                                   DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DragStartingCommand}"
+                                                   DragStartingCommandParameter="{Binding .}" />
+                            <DropGestureRecognizer AllowDrop="True" 
+                                                DropCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OnDropCompletedCommand}" 
+                                                DropCommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                            <CheckBox Grid.Column="0" CheckedChanged="OnChecking" IsChecked="{Binding Concluida}" VerticalOptions="Center" />
+
+                            <Label Grid.Column="1" 
+                                   Text="{Binding Titulo}" 
+                                   VerticalOptions="Center"
+                                   Margin="10,0"
+                                   FontSize="16" />
+
+                            <Button Grid.Column="2"
+                                    Text="X"
+                                    BackgroundColor="Transparent"
+                                    TextColor="Red"
+                                    FontAttributes="Bold"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RemoverTarefaCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>
